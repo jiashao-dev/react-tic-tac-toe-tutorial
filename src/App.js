@@ -11,7 +11,11 @@ export default function Game() {
     let description = move > 0 ? "Go to move #" + move : "Go to game start";
     return (
       <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
+        {
+          move == currentMove ? 
+            <p>{`You are at move #${move}`}</p> :
+            <p><button onClick={() => jumpTo(move)}>{description}</button></p>
+        }
       </li>
     )
   })
