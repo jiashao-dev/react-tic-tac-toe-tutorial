@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 // Game component
 export default function Game() {
+  const [sortAscending, setSortAscending] = useState(true);
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
   const currentSquares = history[currentMove];
@@ -30,13 +31,18 @@ export default function Game() {
     setCurrentMove(nextMove);
   }
 
+  function handleSort() {
+    setSortAscending(!sortAscending);
+  }
+
   return (
     <div className="game">
       <div className="game-board">
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <ol>{moves}</ol>
+        <button onClick={handleSort}>Sort {sortAscending ? 'Descending' : 'Ascending'}</button>
+        <ol>{sortAscending ? moves : moves.reverse()}</ol>
       </div>
     </div>
   )
