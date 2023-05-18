@@ -1,5 +1,13 @@
 import React, { useState } from "react";
 
+function findDifference(currentBoard, prevBoard) {
+  for (let i = 0; i < 9; i++) {
+    if (currentBoard[i] !== prevBoard[i]) {
+      return i;
+    }
+  }
+}
+
 // Game component
 export default function Game() {
   const [sortAscending, setSortAscending] = useState(true);
@@ -9,13 +17,19 @@ export default function Game() {
   const xIsNext = currentMove % 2 === 0;
 
   const moves = history.map((squares, move) => {
-    let description = move > 0 ? "Go to move #" + move : "Go to game start";
+    const isCurrentMove = move === currentMove;
+    const isGameStart = move === 0;
+    const squareBePlayed = isGameStart ? findDifference(squares, Array(9).fill(null)) : findDifference(squares, history[move - 1]);
+    const [x, y] = [Math.floor(squareBePlayed / 3), Math.floor(squareBePlayed % 3)]
+    const currentText = `You are at move #${move} ${isGameStart ? "" : `(${x}, ${y})`}`;
+    const buttonText = move > 0 ? `Go to move #${move} (${x}, ${y})` : "Go to game start";
+
     return (
       <li key={move}>
         {
-          move === currentMove ? 
-            <p>{`You are at move #${move}`}</p> :
-            <p><button onClick={() => jumpTo(move)}>{description}</button></p>
+          isCurrentMove ?
+            <p>{currentText}</p> :
+            <p><button onClick={() => jumpTo(move)}>{buttonText}</button></p>
         }
       </li>
     )
@@ -81,7 +95,7 @@ function Board({ xIsNext, squares, onPlay }) {
       const squareID = i * 3 + j;
 
       row.push(
-        <Square key={squareID} value={squares[i * 3 + j]} onSquareClick={() => handleClick(i * 3 + j)} isWinnerSquare={winner && winner.includes(squareID)} />
+        <Square key={squareID} value={squares[squareID]} onSquareClick={() => handleClick(squareID)} isWinnerSquare={winner && winner.includes(squareID)} />
       )
     }
 
